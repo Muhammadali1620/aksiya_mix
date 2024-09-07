@@ -39,6 +39,7 @@ INSTALLED_APPS += [
     'apps.appeals.apps.AppealsConfig',
     'apps.authentication.apps.AuthenticationConfig',
     'apps.categories.apps.CategoriesConfig',
+    'apps.comments.apps.CommentsConfig',
     'apps.companies.apps.CompaniesConfig',
     'apps.complaints.apps.ComplaintsConfig',
     'apps.discounts.apps.DiscountsConfig',

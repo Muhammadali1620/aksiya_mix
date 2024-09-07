@@ -2,23 +2,24 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
+from django_ckeditor_5.fields import CKEditor5Field
+
+from apps.general.models import CurrencyRate
+from apps.discounts.choices import Currency
+
 
 class ServiceDiscount(models.Model):
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=200)
-    icon = models.ImageField(upload_to='discount/icon/%Y/%m/%d')
+    icon = models.ImageField(upload_to='discount/icon/%Y/%m/%d/')
 
     def __str__(self):
         return self.name
 
 
 class Discount(models.Model):
-    class Currency(models.IntegerChoices):
-        UZS = 1, "UZS"
-        USD = 2, "USD"
-
     class Status(models.IntegerChoices):
-        CHECKING = 1, "CHECKING"
+        PROCESS = 1, "PROCESS"
         ACCEPTED = 2, "ACCEPTED"
         REJECTED = 3, "REJECTED"
     
@@ -32,13 +33,14 @@ class Discount(models.Model):
 
     company = models.ForeignKey("companies.Company", on_delete=models.CASCADE, related_name="discounts")
     filials = models.ManyToManyField("companies.Filial", related_name="discounts")
-    category = models.ForeignKey("categories.Category", on_delete=models.PROTECT, related_name="discounts")
+    category = models.ForeignKey("categories.Category", on_delete=models.PROTECT, related_name="discounts",
+                                 limit_choices_to={'parent__patent__isnull: False'})
 
     discount_type = models.PositiveSmallIntegerField(choices=DiscountChoices.choices)
     
     title = models.CharField(max_length=255)
-    description = models.CharField(max_length=1255, null=True, blank=True)
-    video = models.FileField(upload_to='discount/video/%Y/%m/%d')
+    description = CKEditor5Field('content', config_name='extends')
+    video = models.FileField(upload_to='discount/video/%Y/%m/%d/')
 
     available = models.PositiveIntegerField()
 
@@ -47,7 +49,7 @@ class Discount(models.Model):
 
     in_stock = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
-    status = models.PositiveSmallIntegerField(choices=Status.choices, default=Status.CHECKING)
+    status = models.PositiveSmallIntegerField(choices=Status.choices, default=Status.PROCESS)
 
     views = models.PositiveIntegerField(default=0)
     likes = models.PositiveIntegerField(default=0)
@@ -78,9 +80,11 @@ class Discount(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.title
-    
+    def get_old_price_by_currency(self, currency):
+        if currency != self.currency:
+            return CurrencyRate.objects.get(currency=currency).in_sum * self.old_price
+        return self.old_price           
+        
     def clean(self):
         if self.discount_type == self.DiscountChoices.STANDARD:
             if self.discount_value is None:
@@ -119,8 +123,11 @@ class Discount(models.Model):
         if self.end_date < timezone.now():
             raise ValidationError("End date must be in the future")
 
+    def __str__(self):
+        return self.title
+
 
 class DiscountImage(models.Model):
     discount = models.ForeignKey(Discount, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='discount/image/%Y/%m/%d')
+    image = models.ImageField(upload_to='discount/image/%Y/%m/%d/')
     ordering_number = models.PositiveIntegerField()

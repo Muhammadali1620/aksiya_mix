@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+
+  aksiya_mix:
+    build: .
+    container_name: aksiya_mix
+    command: python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - .env
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8000:8000"
+    volumes:
+      - ".:/app"
+    depends_on:
+      - aksiya_mix_postgres
+
+  aksiya_mix_postgres:
+    image: postgres:15.8
+    container_name: aksiya_mix_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=aksiya_mix_db
+      - POSTGRES_USER=aksiya_mix_db_user
+      - POSTGRES_PASSWORD=qwerty
+
+volumes:
+  postgres_data:

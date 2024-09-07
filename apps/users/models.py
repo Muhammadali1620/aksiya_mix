@@ -24,5 +24,6 @@ class CustomUser(AbstractUser):
     gender = models.PositiveSmallIntegerField(choices=Gender.choices, blank=True, null=True)
     
     address = models.CharField(max_length=200, blank=True, null=True)
+    
     def __str__(self):
         return self.phone_number

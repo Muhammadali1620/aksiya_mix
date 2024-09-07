@@ -15,10 +15,10 @@ class Complaint(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.phone_number
-
     def save(self, *args, **kwargs):
         if self.phone_number is None or self.phone_number == '':
             self.phone_number = self.user.phone_number
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.phone_number

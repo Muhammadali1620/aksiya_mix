@@ -33,9 +33,9 @@ class DiscountFeature(models.Model):
     price = models.DecimalField(max_digits=20, decimal_places=1, default=0, validators=[MinValueValidator(0)])
     ordering_number = models.PositiveSmallIntegerField()
 
-    def __str__(self):
-        return self.price
-
     def clean(self):
         if self.discount.category.id != self.feature_value.feature.category.id:
             raise ValidationError('Feature value category does not match discount category')
+    
+    def __str__(self):
+        return self.price
