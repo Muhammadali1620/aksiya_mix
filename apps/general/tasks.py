@@ -12,5 +12,5 @@ def get_currency():
         obj.in_sum = response.json()[0]['Rate']
         obj.save()
     else:
-        CurrencyRate.objects.create(currency=Currency.USD, in_sum=response.json()[0]['Rate'])
-    print(response.json()[0]['Rate'])
+        obj = CurrencyRate.objects.create(currency=Currency.USD, in_sum=response.json()[0]['Rate'])
+    return obj

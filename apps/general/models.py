@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.cache import cache
 
 from apps.discounts.choices import Currency
 
