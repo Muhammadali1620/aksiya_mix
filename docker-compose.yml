@@ -2,59 +2,54 @@ version: '3.8'
 
 services:
 
-  aksiya_mix:
+  web_app:
     build: .
-    container_name: aksiya_mix
+    container_name: web_app
     command: python manage.py runserver 0.0.0.0:8000
     env_file:
-      - .env
-    environment:
-      - PYTHONDONTWRITEBYTECODE=1
-      - PYTHONUNBUFFERED=1
+      - src/.env
     ports:
       - "8000:8000"
     volumes:
-      - ".:/app"
+      - "./src:/app"
     depends_on:
-      - aksiya_mix_postgres
+      - postgres_db
+      - redis_db
 
-  aksiya_mix_postgres:
+  postgres_db:
     image: postgres:15.8
-    container_name: aksiya_mix_db
+    container_name: postgres_db
+    env_file:
+      - ./src/.env
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_DB=aksiya_mix_db
-      - POSTGRES_USER=aksiya_mix_db_user
-      - POSTGRES_PASSWORD=qwerty
 
-  aksiya_mix_redis:
+  redis_db:
     image: redis:7.0.15
-    container_name: aksiya_mix_redis
+    container_name: redis_db
     ports:
       - "6380:6379"
     volumes:
       - redis_data:/data
 
-  aksiya_mix_celery:
+  celery_worker:
     build: .
     command: celery -A config worker --loglevel=info
     volumes:
-      - .:/app
+      - ./src:/app
     depends_on:
-      - aksiya_mix_redis
-      - aksiya_mix
+      - redis_db
 
-  aksiya_mix_celery_beat:
+  celery_beat:
     build: .
     command: celery -A config beat --loglevel=info
     volumes:
-      - .:/app
+      - ./src:/app
     depends_on:
-      - aksiya_mix_redis
-      - aksiya_mix
+      - redis_db
+      - celery_worker
 
 volumes:
   postgres_data:
