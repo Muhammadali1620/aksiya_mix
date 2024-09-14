@@ -24,7 +24,7 @@ class Complaint(AbstractModel):
 
     def clean(self):
         if not self.company or not self.discount:
-            raise ValueError('Company and discount must be provided')
+            raise ValueError({'Company and discount must be provided'})
 
     def __str__(self):
         return self.phone_number

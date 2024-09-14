@@ -29,7 +29,7 @@ def validate_image_size(image):
     img = Image.open(image)
     max_width = 500
     max_height = 250
-
+    print(img.width, img.height)
     if img.width > max_width or img.height > max_height:
         raise ValidationError(f"Image dimensions should not exceed"
                               f" {max_width}px in width and {max_height}px in height.")

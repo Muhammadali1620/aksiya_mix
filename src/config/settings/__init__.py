@@ -5,4 +5,5 @@ from .ckeditor import *
 from .database import *
 from .djdt import *
 from .languages import *
+from .rest_framework_simplejwt import *
 from .rest_framework import *

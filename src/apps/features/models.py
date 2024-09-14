@@ -41,7 +41,7 @@ class DiscountFeature(AbstractModel):
 
     def clean(self):
         if self.discount.category.id != self.feature_value.feature.category.id:
-            raise ValidationError('Feature value category does not match discount category')
+            raise ValidationError({'Feature value category does not match discount category'})
     
     def __str__(self):
         return self.price

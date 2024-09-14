@@ -50,7 +50,7 @@ class Company(AbstractModel):
     slogan = models.CharField(max_length=30, blank=True, null=True)
 
     region = models.PositiveSmallIntegerField(choices=Regions.choices)
-    district = models.PositiveSmallIntegerField(choices=District.choices)
+    district = models.CharField(choices=District.choices)
     address = models.CharField(max_length=255)
     longitude = models.FloatField()
     latitude = models.FloatField()
@@ -80,10 +80,10 @@ class Company(AbstractModel):
 
     def clean(self):
         if self.district and self.district.split('X')[0] != str(self.region):
-            raise ValidationError('District and region do not match')
+            raise ValidationError({'region':'District and region do not match'})
         
     def save(self, *args, **kwargs):
-        self._id = generate_id()
+        self._id = generate_id(Company)
         super().save(*args, **kwargs)
         
     def __str__(self):
@@ -143,7 +143,7 @@ class CompanyTimeTable(AbstractModel):
 
     def clean(self):
         if self.start_time > self.end_time:
-            raise ValidationError('Start time must be less than end time')
+            raise ValidationError({'start_time':'Start time must be less than end time'})
         
         if self.company and self.filial:
-            raise ValidationError('Company and Filial cannot be set together')
+            raise ValidationError({'Company and Filial cannot be set together'})

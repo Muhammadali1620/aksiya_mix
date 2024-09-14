@@ -19,6 +19,7 @@ urlpatterns = [
 
     # My apps
     path('api/v1/discount/', include('apps.discounts.urls')),
+    path('api/v1/auth/', include('apps.authentication.urls')),
 
 ]
 

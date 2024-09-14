@@ -3,7 +3,6 @@ import random
 
 from django.core.cache import cache
 from django.db.models import FileField, ImageField, CharField, TextField, SlugField
-from django.template.defaultfilters import slugify
 
 from apps.general.tasks import get_currency
 
@@ -21,14 +20,6 @@ def normalize_txt(obj):
             obj_field = getattr(obj, field.name)
             if not obj_field is None:
                 setattr(obj, field.name, ' '.join(obj_field.split()))
-
-
-def normalize_slug(obj):
-    for field in obj._meta.get_fields():
-        if isinstance(field, SlugField):
-            obj_field = getattr(obj, field.name)
-            if not obj_field is None:
-                setattr(obj, field.name, slugify(obj_field))
 
 
 def delete_file_after_delete_obj(instance):

@@ -1,8 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from django.core.validators import FileExtensionValidator
-from django.core.validators import MinValueValidator
+from django.core.validators import FileExtensionValidator, MinValueValidator
 
 from apps.companies.validators import validate_company_video_size
 from apps.discounts.choices import Currency
@@ -42,7 +41,7 @@ class Discount(AbstractModel):
     category = models.ForeignKey("categories.Category", 
                                  on_delete=models.PROTECT, 
                                  related_name="discounts",
-                                 limit_choices_to={'parent__parent__isnull: False'})
+                                 limit_choices_to={'parent__parent__isnull': False})
 
     discount_type = models.PositiveSmallIntegerField(choices=Types.choices)
     
@@ -109,44 +108,44 @@ class Discount(AbstractModel):
         
     def clean(self):
         if self.discount_type == self.Types.STANDARD:
-            if self.discount_value is None:
-                raise ValidationError("Discount value is required")
+            if not self.discount_value:
+                raise ValidationError({'discount_value':"Discount value is required"})
             
-            if self.discount_value_is_percent and self.discount_value < 1 or self.discount_value > 100:
-                raise ValidationError("Discount value must be between 1 and 100")
+            if self.discount_value_is_percent and int(self.discount_value) < 1 or int(self.discount_value) > 99:
+                raise ValidationError({'discount_value':"Discount value must be between 1 and 100"})
             
         if self.discount_type == self.Types.FREE_PRODUCT:
-            if self.min_quantity is None:
-                raise ValidationError("Min quantity is required")
+            if not self.min_quantity:
+                raise ValidationError({'min_quantity':"Min quantity is required"})
             
-            if self.bonus_quantity is None:
-                raise ValidationError("Bonus quantity is required")
+            if not self.bonus_quantity:
+                raise ValidationError({'bonus_quantity':"Bonus quantity is required"})
             
         if self.discount_type == self.Types.QUANTITY_DISCOUNT:
-            if self.min_quantity is None:
-                raise ValidationError("Min quantity is required")
+            if not self.min_quantity:
+                raise ValidationError({'min_quantity':"Min quantity is required"})
 
-            if self.bonus_discount_value is None:
-                raise ValidationError("Bonus discount value is required")
+            if not self.bonus_discount_value:
+                raise ValidationError({'bonus_discount_value':"Bonus discount value is required"})
             
             if self.bonus_discount_value_is_percent and self.bonus_discount_value < 1 or self.bonus_discount_value > 100:
-                raise ValidationError("Bonus discount value must be between 1 and 100")
+                raise ValidationError({'bonus_discount_value':"Bonus discount value must be between 1 and 100"})
 
         if self.discount_type == self.Types.SERVICE_DISCOUNT:
-            if self.min_quantity is None:
-                raise ValidationError("Min quantity is required")
+            if not self.min_quantity:
+                raise ValidationError({'min_quantity':"Min quantity is required"})
 
-            if self.service is None:
-                raise ValidationError("Service is required")
+            if not self.service:
+                raise ValidationError({'service':"Service is required"})
 
         if self.start_date > self.end_date:
-            raise ValidationError("Start date must be before end date")
+            raise ValidationError({'start_date':"Start date must be before end date"})
         
         if self.end_date < timezone.now():
-            raise ValidationError("End date must be in the future")
+            raise ValidationError({'end_date':"End date must be in the future"})
 
     def save(self, *args, **kwargs):
-        self._id = generate_id()
+        self._id = generate_id(Discount)
         super().save(*args, **kwargs)
 
     def __str__(self):
