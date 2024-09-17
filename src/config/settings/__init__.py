@@ -7,3 +7,4 @@ from .djdt import *
 from .languages import *
 from .rest_framework_simplejwt import *
 from .rest_framework import *
+from .sms_providers import *
