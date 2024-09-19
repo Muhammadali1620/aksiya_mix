@@ -8,6 +8,7 @@ import random
 class EskizUz:
     TOKEN_KEY = "eskiz_uz_token"
     AUTH_CODE_KEY = "auth_code_{phone_number}"
+    FORGOT_PASSWORD_KEY = "forgot_password_token{token}"
 
     GET_TOKEN_URL = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     SEND_SMS_URL = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
@@ -34,12 +35,14 @@ class EskizUz:
         return token
 
     @classmethod
-    def send_sms(cls, send_type: str, phone_number: str, nickname='4546', link=None):
+    def send_sms(cls, send_type: str, phone_number: str, nickname='4546', token=None, link=None):
         if send_type == 'FORGOT_PASSWORD':
             message = cls.FORGOT_PASSWORD_MESSAGE.format(link=link)
+            cache.set(cls.FORGOT_PASSWORD_KEY.format(token=token), phone_number, timeout=60*10)
+
         elif send_type == 'AUTH_CODE':
             code = random.randint(1000, 9999)
-            message = cls.AUTH_CODE_MESSAGE.format(code=code)
+            message = code #cls.AUTH_CODE_MESSAGE.format(code=code)
             cache.set(cls.AUTH_CODE_KEY.format(phone_number=phone_number), code, 60 * 10)
         else:
             raise ValueError("Invalid send type")

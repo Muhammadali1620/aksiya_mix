@@ -3,8 +3,8 @@ from .base import *
 from .celery import *
 from .ckeditor import *
 from .database import *
-from .djdt import *
+from .debug_toolbar import *
 from .languages import *
-from .rest_framework_simplejwt import *
+from .simplejwt import *
 from .rest_framework import *
 from .sms_providers import *

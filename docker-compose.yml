@@ -20,9 +20,9 @@ services:
     image: postgres:15.8
     container_name: postgres_db
     env_file:
-      - ./src/.env
+      - src/.env
     ports:
-      - "5433:5432"
+      - "5431:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -30,7 +30,7 @@ services:
     image: redis:7.0.15
     container_name: redis_db
     ports:
-      - "6380:6379"
+      - "6378:6379"
     volumes:
       - redis_data:/data
 
