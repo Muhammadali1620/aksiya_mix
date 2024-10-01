@@ -4,20 +4,10 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator, MinValueValidator
 
 from apps.companies.validators import validate_company_video_size
+from apps.general.services import generate_id, get_usd_in_sum
+from apps.services.models import Service
 from apps.discounts.choices import Currency
 from apps.general.models import AbstractModel
-from apps.general.services import generate_id, get_usd_in_sum
-
-
-class ServiceDiscount(AbstractModel):
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200)
-    icon = models.ImageField(upload_to='discount/icon/%Y/%m/%d/', blank=True, null=True)
-
-    is_active = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.name
 
 
 class Discount(AbstractModel):
@@ -95,7 +85,7 @@ class Discount(AbstractModel):
     bonus_discount_value_is_percent = models.BooleanField(default=False)
 
     #--service discount--
-    service = models.ForeignKey(ServiceDiscount, on_delete=models.SET_NULL, blank=True, null=True)
+    service = models.ForeignKey(Service, on_delete=models.SET_NULL, blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

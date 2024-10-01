@@ -51,6 +51,9 @@ INSTALLED_APPS += [
     'apps.general.apps.GeneralConfig',
     'apps.notifications.apps.NotificationsConfig',
     'apps.payments.apps.PaymentsConfig',
+    'apps.services.apps.ServicesConfig',
+    'apps.tags.apps.TagsConfig',
+    'apps.top_discounts.apps.TopDiscountsConfig',
     'apps.users.apps.UsersConfig',
     'apps.wishlists.apps.WishlistsConfig',
 ]
